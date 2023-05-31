@@ -16,7 +16,7 @@ export function Anthenthicated(
   const [, token] = authToken.split(" ");
 
   try {
-    verify(token, process.env.JWT_SECRET!);
+    verify(token, process.env.JWT_SECRET as string);
 
     return next();
   } catch (err) {

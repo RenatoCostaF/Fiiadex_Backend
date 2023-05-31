@@ -31,10 +31,14 @@ export class AuthenticateController {
       }
 
       // Gera token pro usuário
-      const token = sign({}, process.env.JWT_SECRET!, {
-        subject: userAlreadyExist.id,
-        expiresIn: "20s",
-      });
+      const token = sign(
+        { userId: userAlreadyExist.id, user: userAlreadyExist.name },
+        process.env.JWT_SECRET as string,
+        {
+          subject: userAlreadyExist.id,
+          expiresIn: "3s",
+        }
+      );
 
       // gera e salva o refresh token na base, deleta caso já exista um com mesmo userId pois é único
       await prismaClient.refreshToken.deleteMany({
@@ -49,11 +53,13 @@ export class AuthenticateController {
         },
       });
 
-      return response
-        .status(200)
-        .json({ token: token, refresh_token: generateRefreshToken });
+      const data = {
+        token: token,
+        refresh_token: generateRefreshToken.id,
+      };
+
+      return response.status(200).json(data);
     } catch (error) {
-      console.log(error);
       return error;
     }
   }

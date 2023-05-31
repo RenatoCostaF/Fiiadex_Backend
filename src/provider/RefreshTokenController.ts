@@ -16,10 +16,18 @@ class RefreshTokenController {
       return response.status(400).json({ message: "Refresh token invalido!" });
     }
 
-    const token = sign({}, process.env.JWT_SECRET!, {
-      subject: refreshToken.userId,
-      expiresIn: "20s",
+    const user = await prismaClient.user.findFirst({
+      where: { id: refreshToken.userId },
     });
+
+    const token = sign(
+      { user: user?.name, userId: user?.id },
+      process.env.JWT_SECRET as string,
+      {
+        subject: refreshToken.userId,
+        expiresIn: "60s",
+      }
+    );
 
     const refreshTokenExpired = dayjs().isAfter(
       dayjs.unix(refreshToken.expireIn)
@@ -30,7 +38,7 @@ class RefreshTokenController {
         where: { userId: refreshToken.userId },
       });
 
-      const expireIn = dayjs().add(15, "second").unix();
+      const expireIn = dayjs().add(60, "second").unix();
       const generateRefreshToken = await prismaClient.refreshToken.create({
         data: {
           userId: refreshToken.userId,
@@ -38,9 +46,12 @@ class RefreshTokenController {
         },
       });
 
-      return response
-        .status(200)
-        .json({ token: token, refresh_token: generateRefreshToken });
+      const data = {
+        token: token,
+        refresh_token: generateRefreshToken.id,
+      };
+
+      return response.status(200).json(data);
     }
 
     return response.status(200).json({ token: token });
