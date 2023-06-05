@@ -4,11 +4,11 @@ import dayjs from "dayjs";
 import { prismaClient } from "../database/prismaClient";
 import { sign } from "jsonwebtoken";
 
-class RefreshTokenController {
+class RefreshToken {
   async handle(request: Request, response: Response) {
     const { refresh_token } = request.body;
 
-    const refreshToken = await prismaClient.refreshToken.findFirst({
+    const refreshToken = await prismaClient.refreshTokenSchema.findFirst({
       where: { id: refresh_token },
     });
 
@@ -34,17 +34,19 @@ class RefreshTokenController {
     );
 
     if (refreshTokenExpired) {
-      await prismaClient.refreshToken.deleteMany({
+      await prismaClient.refreshTokenSchema.deleteMany({
         where: { userId: refreshToken.userId },
       });
 
       const expireIn = dayjs().add(60, "second").unix();
-      const generateRefreshToken = await prismaClient.refreshToken.create({
-        data: {
-          userId: refreshToken.userId,
-          expireIn,
-        },
-      });
+      const generateRefreshToken = await prismaClient.refreshTokenSchema.create(
+        {
+          data: {
+            userId: refreshToken.userId,
+            expireIn,
+          },
+        }
+      );
 
       const data = {
         token: token,
@@ -58,4 +60,4 @@ class RefreshTokenController {
   }
 }
 
-export { RefreshTokenController };
+export { RefreshToken };

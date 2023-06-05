@@ -8,22 +8,47 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(uuid()) @map("_id")
-  email        String         @unique
+  id           String               @id @default(uuid()) @map("_id")
+  email        String               @unique
   password     String
   name         String
-  created_at   DateTime       @default(now())
-  updated_at   DateTime       @updatedAt
-  refreshToken refreshToken[]
+  created_at   DateTime             @default(now())
+  updated_at   DateTime             @updatedAt
+  refreshToken RefreshTokenSchema[]
+  compras      Compra[]
 
   @@map("users")
 }
 
-model refreshToken {
+model RefreshTokenSchema {
   id       String @id @default(uuid()) @map("_id")
   expireIn Int
-  user     User   @relation(fields: [userId], references: [id])
   userId   String
+  user     User   @relation(fields: [userId], references: [id])
 
   @@map("refresh_token")
+}
+
+model Compra {
+  id            String          @id @default(uuid()) @map("_id")
+  userId        String
+  parcelas      Int?
+  valorParcela  Float?
+  valorTotal    Float?
+  status        String?
+  user          User            @relation(fields: [userId], references: [id])
+  CompraParcela CompraParcela[]
+
+  @@map("compras")
+}
+
+model CompraParcela {
+  id             String   @id @default(uuid()) @map("_id")
+  compraId       String
+  valor          Float
+  status         String?
+  dataVencimento DateTime
+  compra         Compra   @relation(fields: [compraId], references: [id])
+
+  @@map("compras_parcelas")
 }

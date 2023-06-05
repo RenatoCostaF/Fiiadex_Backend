@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { prismaClient } from "../database/prismaClient";
 import { sign } from "jsonwebtoken";
 
-export class AuthenticateController {
+class Authenticate {
   async handle(request: Request, response: Response) {
     const { email, password } = request.body;
 
@@ -41,17 +41,19 @@ export class AuthenticateController {
       );
 
       // gera e salva o refresh token na base, deleta caso já exista um com mesmo userId pois é único
-      await prismaClient.refreshToken.deleteMany({
+      await prismaClient.refreshTokenSchema.deleteMany({
         where: { userId: userAlreadyExist.id },
       });
       const expireIn = dayjs().add(15, "second").unix();
 
-      const generateRefreshToken = await prismaClient.refreshToken.create({
-        data: {
-          userId: userAlreadyExist.id,
-          expireIn,
-        },
-      });
+      const generateRefreshToken = await prismaClient.refreshTokenSchema.create(
+        {
+          data: {
+            userId: userAlreadyExist.id,
+            expireIn,
+          },
+        }
+      );
 
       const data = {
         token: token,
@@ -64,3 +66,5 @@ export class AuthenticateController {
     }
   }
 }
+
+export { Authenticate };
