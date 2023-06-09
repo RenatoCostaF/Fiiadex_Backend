@@ -7,12 +7,12 @@ export class CreateComprasController {
     const { parcelas, valorParcela, valorTotal, userId } = request.body;
 
     try {
-      await prismaClient.$transaction(async (prismaClient) => {
+      await prismaClient.$transaction(async (prismaClient: any) => {
         const compra = await prismaClient.compra.create({
           data: {
-            parcelas,
-            valorParcela,
-            valorTotal,
+            parcelas: parseInt(parcelas),
+            valorParcela: parseInt(valorParcela),
+            valorTotal: parseInt(valorTotal),
             status: "ATIVO",
             userId,
           },
@@ -23,7 +23,7 @@ export class CreateComprasController {
             data: {
               status: "ATIVO",
               compraId: compra.id,
-              valor: valorParcela,
+              valor: parseInt(valorParcela),
               dataVencimento: new Date(
                 new Date().setMonth(new Date().getMonth() + i)
               ),
@@ -36,7 +36,9 @@ export class CreateComprasController {
           .json({ message: "Compra realizada com sucesso!" });
       });
     } catch (err) {
-      return response.status(400).json({ message: err });
+      return response
+        .status(400)
+        .json({ message: "Erro ao finalizar compra!" });
     }
   }
 }

@@ -58,6 +58,11 @@ class Authenticate {
       const data = {
         token: token,
         refresh_token: generateRefreshToken.id,
+        user: {
+          name: userAlreadyExist.name,
+          email: userAlreadyExist.email,
+          id: userAlreadyExist.id,
+        },
       };
 
       return response.status(200).json(data);

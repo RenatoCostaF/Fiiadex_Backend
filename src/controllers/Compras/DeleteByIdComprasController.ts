@@ -7,7 +7,7 @@ export class DeleteComprasByIdController {
     const { id } = request.params;
 
     try {
-      await prismaClient.$transaction(async (prismaClient) => {
+      await prismaClient.$transaction(async (prismaClient: any) => {
         const compra = await prismaClient.compra.findUnique({ where: { id } });
 
         if (compra) {
