@@ -1,36 +1,37 @@
 import { Request, Response } from "express";
 
+import { Compra } from "../../utils/types/compra";
 import { prismaClient } from "../../database/prismaClient";
 
 export class UpdateComprasController {
   async handle(request: Request, response: Response) {
-    const { parcelas, valorParcela, valorTotal, userId } = request.body;
+    const { userId, parcelas, valorTotal, status }: Compra = request.body;
+
     const { id } = request.params;
 
     try {
       await prismaClient.$transaction(async (prismaClient) => {
-        const newBase = await prismaClient.compra.update({
+        const newCompra = await prismaClient.compra.update({
           where: { id },
           data: {
             parcelas,
-            valorParcela,
             valorTotal,
-            status: "ATIVO",
+            status: status ? status : "DEVENDO",
             userId,
           },
         });
 
         await prismaClient.compraParcela.deleteMany({
-          where: { compraId: newBase?.id },
+          where: { compraId: newCompra?.id },
         });
 
         for (let i = 1; i <= parcelas; i++) {
           await prismaClient.compraParcela.create({
             data: {
               status: "ATIVO",
-              compraId: newBase.id,
-              valor: valorParcela,
-              dataVencimento: new Date(
+              compraId: newCompra.id,
+              valorParcela: valorTotal / parcelas,
+              dataPagamento: new Date(
                 new Date().setMonth(new Date().getMonth() + i)
               ),
             },

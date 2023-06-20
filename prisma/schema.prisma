@@ -12,6 +12,7 @@ model User {
   email        String               @unique
   password     String
   name         String
+  role         String
   created_at   DateTime             @default(now())
   updated_at   DateTime             @updatedAt
   refreshToken RefreshTokenSchema[]
@@ -33,9 +34,11 @@ model Compra {
   id            String          @id @default(uuid()) @map("_id")
   userId        String
   parcelas      Int?
-  valorParcela  Float?
   valorTotal    Float?
   status        String?
+  dataCompra    DateTime
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
   user          User            @relation(fields: [userId], references: [id])
   CompraParcela CompraParcela[]
 
@@ -43,12 +46,12 @@ model Compra {
 }
 
 model CompraParcela {
-  id             String   @id @default(uuid()) @map("_id")
-  compraId       String
-  valor          Float
-  status         String?
-  dataVencimento DateTime
-  compra         Compra   @relation(fields: [compraId], references: [id])
+  id            String   @id @default(uuid()) @map("_id")
+  compraId      String
+  valorParcela  Float
+  status        String?
+  dataPagamento DateTime
+  compra        Compra   @relation(fields: [compraId], references: [id])
 
   @@map("compras_parcelas")
 }

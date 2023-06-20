@@ -21,11 +21,16 @@ class RefreshToken {
     });
 
     const token = sign(
-      { user: user?.name, userId: user?.id },
+      {
+        user: user?.name,
+        userId: user?.id,
+        role: user?.role,
+        email: user?.email,
+      },
       process.env.JWT_SECRET as string,
       {
         subject: refreshToken.userId,
-        expiresIn: "60s",
+        expiresIn: "3600s",
       }
     );
 
@@ -38,7 +43,7 @@ class RefreshToken {
         where: { userId: refreshToken.userId },
       });
 
-      const expireIn = dayjs().add(60, "second").unix();
+      const expireIn = dayjs().add(3600, "second").unix();
       const generateRefreshToken = await prismaClient.refreshTokenSchema.create(
         {
           data: {

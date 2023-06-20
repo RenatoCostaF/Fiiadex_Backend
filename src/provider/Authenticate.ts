@@ -32,11 +32,16 @@ class Authenticate {
 
       // Gera token pro usuário
       const token = sign(
-        { userId: userAlreadyExist.id, user: userAlreadyExist.name },
+        {
+          userId: userAlreadyExist.id,
+          user: userAlreadyExist.name,
+          email: userAlreadyExist.email,
+          role: userAlreadyExist.role,
+        },
         process.env.JWT_SECRET as string,
         {
           subject: userAlreadyExist.id,
-          expiresIn: "3s",
+          expiresIn: "3600s",
         }
       );
 
@@ -44,7 +49,7 @@ class Authenticate {
       await prismaClient.refreshTokenSchema.deleteMany({
         where: { userId: userAlreadyExist.id },
       });
-      const expireIn = dayjs().add(15, "second").unix();
+      const expireIn = dayjs().add(3600, "second").unix();
 
       const generateRefreshToken = await prismaClient.refreshTokenSchema.create(
         {
@@ -62,6 +67,7 @@ class Authenticate {
           name: userAlreadyExist.name,
           email: userAlreadyExist.email,
           id: userAlreadyExist.id,
+          role: userAlreadyExist.role,
         },
       };
 
