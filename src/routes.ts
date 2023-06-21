@@ -6,6 +6,7 @@ import { DeleteComprasByIdController } from "./controllers/Compras/DeleteByIdCom
 import { GetAllUserController } from "./controllers/Users/GetAllUserController";
 import { GetComprasByIdController } from "./controllers/Compras/GetByIdComprasController";
 import { GetComprasController } from "./controllers/Compras/GetAllComprasController";
+import { GetComprasUserByIdController } from "./controllers/Compras/GetByIdUserComprasController";
 import { GetUserController } from "./controllers/Users/GetUserController";
 import { RefreshToken } from "./provider/RefreshToken";
 import { Router } from "express";
@@ -23,6 +24,7 @@ const getAllCompra = new GetComprasController();
 const getbyIdCompra = new GetComprasByIdController();
 const deletebyIdCompra = new DeleteComprasByIdController();
 const getAllUser = new GetAllUserController();
+const getbyUserIdCompra = new GetComprasUserByIdController();
 
 // AUTHENTICATE
 router.post("/login", authenticate.handle);
@@ -36,6 +38,7 @@ router.get("/user", Anthenthicated, getUser.handle);
 //COMPRA
 router.get("/compra", Anthenthicated, getAllCompra.handle);
 router.get("/compra/:id", Anthenthicated, getbyIdCompra.handle);
+router.post("/compra", Anthenthicated, getbyUserIdCompra.handle);
 router.post("/compra", Anthenthicated, creatCompra.handle);
 router.post("/compra/:id", Anthenthicated, updateCompra.handle);
 router.delete("/compra/:id", Anthenthicated, deletebyIdCompra.handle);
