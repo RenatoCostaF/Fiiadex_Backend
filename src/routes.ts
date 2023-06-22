@@ -28,7 +28,7 @@ const deletebyIdCompra = new DeleteComprasByIdController();
 const getAllUser = new GetAllUserController();
 const getbyUserIdCompra = new GetComprasUserByIdController();
 
-//HEALTH
+//VERIFICAR SE ESTÁ OK
 router.get("/", (request: Request, response: Response) => {
   return response.status(200).json({ message: "OK" });
 });
