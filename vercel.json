@@ -7,7 +7,7 @@
         },
         {
             "src": "prisma/schema.prisma",
-            "use": "npx prisma generate"
+            "use": "@vercel/static"
         }
     ],
     "routes": [
