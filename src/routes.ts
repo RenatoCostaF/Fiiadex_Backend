@@ -1,3 +1,5 @@
+import { Request, Response } from "express";
+
 import { Anthenthicated } from "./middleware/auth";
 import { Authenticate } from "./provider/Authenticate";
 import { CreateComprasController } from "./controllers/Compras/CreateComprasController";
@@ -25,6 +27,11 @@ const getbyIdCompra = new GetComprasByIdController();
 const deletebyIdCompra = new DeleteComprasByIdController();
 const getAllUser = new GetAllUserController();
 const getbyUserIdCompra = new GetComprasUserByIdController();
+
+//HEALTH
+router.get("/health", (request: Request, response: Response) => {
+  return response.status(200).json({ message: "OK" });
+});
 
 // AUTHENTICATE
 router.post("/login", authenticate.handle);
