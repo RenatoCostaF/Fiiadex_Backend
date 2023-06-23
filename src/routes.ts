@@ -43,10 +43,11 @@ router.post("/user", Anthenthicated, createUser.handle);
 router.get("/user", Anthenthicated, getUser.handle);
 
 //COMPRA
+router.get("/compra", getAllCompra.handle);
 router.get("/compra", Anthenthicated, getAllCompra.handle);
 router.get("/compra/:id", Anthenthicated, getbyIdCompra.handle);
 router.post("/compra", Anthenthicated, getbyUserIdCompra.handle);
-router.post("/compra", Anthenthicated, creatCompra.handle);
+router.post("/create-compra", Anthenthicated, creatCompra.handle);
 router.post("/compra/:id", Anthenthicated, updateCompra.handle);
 router.delete("/compra/:id", Anthenthicated, deletebyIdCompra.handle);
 

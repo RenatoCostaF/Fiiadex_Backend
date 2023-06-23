@@ -14,7 +14,8 @@ export class CreateComprasController {
             userId,
             parcelas: parcelas,
             valorTotal: valorTotal,
-            dataCompra: dataCompra,
+            // dataCompra: dataCompra,
+            dataCompra: new Date(),
             status: "DEVENDO",
           },
         });
