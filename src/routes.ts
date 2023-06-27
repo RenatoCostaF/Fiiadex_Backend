@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, RequestHandler, Response } from "express";
 
 import { Anthenthicated } from "./middleware/auth";
 import { Authenticate } from "./provider/Authenticate";
@@ -13,6 +13,7 @@ import { GetUserController } from "./controllers/Users/GetUserController";
 import { RefreshToken } from "./provider/RefreshToken";
 import { Router } from "express";
 import { UpdateComprasController } from "./controllers/Compras/UpdateComprasController";
+import { VerifyRoles } from "./middleware/verifyRoles";
 
 const router = Router();
 
@@ -38,17 +39,46 @@ router.post("/login", authenticate.handle);
 router.post("/refresh-token", refreshToken.handle);
 
 // USER
-router.get("/user", Anthenthicated, getAllUser.handle);
-router.post("/user", Anthenthicated, createUser.handle);
-router.get("/user", Anthenthicated, getUser.handle);
+router.get("/user", Anthenthicated, VerifyRoles(["ADMIN"]), getAllUser.handle);
+router.post("/user", Anthenthicated, VerifyRoles(["ADMIN"]), createUser.handle);
+router.get("/user", Anthenthicated, VerifyRoles(["ADMIN"]), getUser.handle);
 
 //COMPRA
-router.get("/compra", getAllCompra.handle);
-router.get("/compra", Anthenthicated, getAllCompra.handle);
-router.get("/compra/:id", Anthenthicated, getbyIdCompra.handle);
-router.post("/compra", Anthenthicated, getbyUserIdCompra.handle);
-router.post("/create-compra", Anthenthicated, creatCompra.handle);
-router.post("/compra/:id", Anthenthicated, updateCompra.handle);
-router.delete("/compra/:id", Anthenthicated, deletebyIdCompra.handle);
+router.get(
+  "/compra",
+  Anthenthicated,
+  VerifyRoles(["ADMIN", "USER"]),
+  getAllCompra.handle
+);
+router.get(
+  "/compra/:id",
+  Anthenthicated,
+  VerifyRoles(["ADMIN", "USER"]),
+  getbyIdCompra.handle
+);
+router.post(
+  "/compra",
+  Anthenthicated,
+  VerifyRoles(["ADMIN", "USER"]),
+  getbyUserIdCompra.handle
+);
+router.post(
+  "/create-compra",
+  Anthenthicated,
+  VerifyRoles(["ADMIN", "USER"]),
+  creatCompra.handle
+);
+router.post(
+  "/compra/:id",
+  Anthenthicated,
+  VerifyRoles(["ADMIN"]),
+  updateCompra.handle
+);
+router.delete(
+  "/compra/:id",
+  Anthenthicated,
+  VerifyRoles(["ADMIN"]),
+  deletebyIdCompra.handle
+);
 
 export { router };
