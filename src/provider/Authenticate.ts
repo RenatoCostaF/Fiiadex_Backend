@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+import bcrypt from "bcrypt";
 import dayjs from "dayjs";
 import { prismaClient } from "../database/prismaClient";
 import { sign } from "jsonwebtoken";
@@ -7,6 +8,8 @@ import { sign } from "jsonwebtoken";
 class Authenticate {
   async handle(request: Request, response: Response) {
     const { email, password } = request.body;
+
+    console.log(password, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
     try {
       // Verifica se existe usuário
@@ -21,8 +24,10 @@ class Authenticate {
       }
 
       // Verifica se a senha está correta
-      const passwordMatch =
-        password === userAlreadyExist.password ? true : false;
+      const passwordMatch = await bcrypt.compare(
+        password,
+        userAlreadyExist.password
+      );
 
       if (!passwordMatch) {
         return response
