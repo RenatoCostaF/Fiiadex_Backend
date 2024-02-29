@@ -16,6 +16,7 @@ model User {
   created_at   DateTime             @default(now())
   updated_at   DateTime             @updatedAt
   refreshToken RefreshTokenSchema[]
+  compras      Compra[]
 
   @@map("users")
 }
@@ -29,17 +30,28 @@ model RefreshTokenSchema {
   @@map("refresh_token")
 }
 
-model Customers {
-  id          String   @id @default(uuid()) @map("_id")
-  email       String   @unique
-  name        String
-  fantasyName String
-  phoneOne    String
-  phoneTwo    String
-  address     String
-  dateOfBirth String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+model Compra {
+  id            String          @id @default(uuid()) @map("_id")
+  userId        String
+  parcelas      Int?
+  valorTotal    Float?
+  status        String?
+  dataCompra    DateTime
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  user          User            @relation(fields: [userId], references: [id])
+  CompraParcela CompraParcela[]
 
-  @@map("customers")
+  @@map("compras")
+}
+
+model CompraParcela {
+  id            String   @id @default(uuid()) @map("_id")
+  compraId      String
+  valorParcela  Float
+  status        String?
+  dataPagamento DateTime
+  compra        Compra   @relation(fields: [compraId], references: [id])
+
+  @@map("compras_parcelas")
 }

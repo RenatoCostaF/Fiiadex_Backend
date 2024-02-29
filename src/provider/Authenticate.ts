@@ -9,6 +9,8 @@ class Authenticate {
   async handle(request: Request, response: Response) {
     const { email, password } = request.body;
 
+    console.log(password, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+
     try {
       // Verifica se existe usuário
       const userAlreadyExist = await prismaClient.user.findFirst({

@@ -1,18 +1,18 @@
-import {
-  Create,
-  Get,
-  GetById,
-  Update,
-} from "./controllers/Customers/customersController";
 import { Request, RequestHandler, Response } from "express";
 
 import { Anthenthicated } from "./middleware/auth";
 import { Authenticate } from "./provider/Authenticate";
+import { CreateComprasController } from "./controllers/Compras/CreateComprasController";
 import { CreateUserController } from "./controllers/Users/CreateUserController";
+import { DeleteComprasByIdController } from "./controllers/Compras/DeleteByIdComprasController";
 import { GetAllUserController } from "./controllers/Users/GetAllUserController";
+import { GetComprasByIdController } from "./controllers/Compras/GetByIdComprasController";
+import { GetComprasController } from "./controllers/Compras/GetAllComprasController";
+import { GetComprasUserByIdController } from "./controllers/Compras/GetByIdUserComprasController";
 import { GetUserController } from "./controllers/Users/GetUserController";
 import { RefreshToken } from "./provider/RefreshToken";
 import { Router } from "express";
+import { UpdateComprasController } from "./controllers/Compras/UpdateComprasController";
 import { VerifyRoles } from "./middleware/verifyRoles";
 
 const router = Router();
@@ -21,11 +21,13 @@ const createUser = new CreateUserController();
 const getUser = new GetUserController();
 const authenticate = new Authenticate();
 const refreshToken = new RefreshToken();
+const creatCompra = new CreateComprasController();
+const updateCompra = new UpdateComprasController();
+const getAllCompra = new GetComprasController();
+const getbyIdCompra = new GetComprasByIdController();
+const deletebyIdCompra = new DeleteComprasByIdController();
 const getAllUser = new GetAllUserController();
-const getCustomers = new Get();
-const createCustomers = new Create();
-const updateCustomers = new Update();
-const getByIdCustomers = new GetById();
+const getbyUserIdCompra = new GetComprasUserByIdController();
 
 //VERIFICAR SE ESTÁ OK
 router.get("/", (request: Request, response: Response) => {
@@ -41,30 +43,42 @@ router.get("/user", Anthenthicated, VerifyRoles(["ADMIN"]), getAllUser.handle);
 router.post("/user", Anthenthicated, VerifyRoles(["ADMIN"]), createUser.handle);
 router.get("/user", Anthenthicated, VerifyRoles(["ADMIN"]), getUser.handle);
 
-// CUSTOMERS
+//COMPRA
 router.get(
-  "/customers",
+  "/compra",
   Anthenthicated,
   VerifyRoles(["ADMIN", "USER"]),
-  getCustomers.handle
+  getAllCompra.handle
 );
 router.get(
-  "/customers/:id",
+  "/compra/:id",
   Anthenthicated,
   VerifyRoles(["ADMIN", "USER"]),
-  getByIdCustomers.handle
+  getbyIdCompra.handle
 );
 router.post(
-  "/customers",
+  "/compra",
   Anthenthicated,
-  VerifyRoles(["ADMIN"]),
-  createCustomers.handle
+  VerifyRoles(["ADMIN", "USER"]),
+  getbyUserIdCompra.handle
 );
-router.patch(
-  "/customers/:id",
+router.post(
+  "/create-compra",
+  Anthenthicated,
+  VerifyRoles(["ADMIN", "USER"]),
+  creatCompra.handle
+);
+router.post(
+  "/compra/:id",
   Anthenthicated,
   VerifyRoles(["ADMIN"]),
-  updateCustomers.handle
+  updateCompra.handle
+);
+router.delete(
+  "/compra/:id",
+  Anthenthicated,
+  VerifyRoles(["ADMIN"]),
+  deletebyIdCompra.handle
 );
 
 export { router };
