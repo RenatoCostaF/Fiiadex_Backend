@@ -9,8 +9,6 @@ class Authenticate {
   async handle(request: Request, response: Response) {
     const { email, password } = request.body;
 
-    console.log(password, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-
     try {
       // Verifica se existe usuário
       const userAlreadyExist = await prismaClient.user.findFirst({
@@ -20,7 +18,7 @@ class Authenticate {
       if (!userAlreadyExist) {
         return response
           .status(400)
-          .json({ message: "Email ou Senha incorreta!" });
+          .json({ status: 400, message: "Email ou Senha incorreta!" });
       }
 
       // Verifica se a senha está correta
@@ -32,7 +30,7 @@ class Authenticate {
       if (!passwordMatch) {
         return response
           .status(400)
-          .json({ message: "Email ou Senha incorreta!" });
+          .json({ status: 400, message: "Email ou Senha incorreta!" });
       }
 
       // Gera token pro usuário
